@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Portal, Button, HStack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Portal,
+  Button,
+  HStack,
+  Text,
+  ChakraProvider,
+  useToken,
+} from '@chakra-ui/react';
 import { MapPin, X, Check } from 'lucide-react';
+import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -8,6 +17,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster';
 import { Local } from '../types';
 import { getCountryFlag } from '../utils';
+import theme from '../theme';
 
 // Fix para ícones do Leaflet
 delete (L.Icon.Default.prototype as Record<string, unknown>)._getIconUrl;
@@ -54,6 +64,7 @@ export function MapView({
     lat: 0,
     lng: 0,
   });
+  const [accentColor] = useToken('colors', ['brand.accent.from']);
 
   // Inicializar mapa
   useEffect(() => {
@@ -125,57 +136,49 @@ export function MapView({
     // Adicionar marcadores
     locals.forEach((local) => {
       const marker = L.marker([local.lat, local.lng]);
-      
       const flag = getCountryFlag(local.pais);
-      const popupContent = `
-        <div style="font-family: Inter, sans-serif; min-width: 200px;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="font-size: 18px;">${flag}</span>
-            <strong style="font-size: 16px; color: #E5E7EB;">${local.cidade}</strong>
-          </div>
-          <div style="color: #9CA3AF; font-size: 14px; margin-bottom: 12px;">
-            ${local.estado ? `${local.estado}, ` : ''}${local.pais}
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button 
-              onclick="window.editLocation('${local.id}')"
-              style="
-                background: linear-gradient(135deg, #22D3EE, #A78BFA);
-                color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-size: 12px;
-                cursor: pointer;
-                font-weight: 500;
-              "
-            >
+
+      const popupNode = document.createElement('div');
+      const root = createRoot(popupNode);
+
+      const PopupContent = () => (
+        <Box minW="200px">
+          <HStack mb={2} spacing={2} align="center">
+            <Text fontSize="lg">{flag}</Text>
+            <Text fontSize="md" fontWeight="semibold" color="brand.text">
+              {local.cidade}
+            </Text>
+          </HStack>
+          <Text color="brand.muted" fontSize="sm" mb={3}>
+            {local.estado ? `${local.estado}, ` : ''}{local.pais}
+          </Text>
+          <HStack spacing={2}>
+            <Button size="xs" variant="gradient" onClick={() => onEditLocation?.(local)}>
               Editar
-            </button>
-            <button 
-              onclick="window.deleteLocation('${local.id}')"
-              style="
-                background: #F43F5E;
-                color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-size: 12px;
-                cursor: pointer;
-                font-weight: 500;
-              "
+            </Button>
+            <Button
+              size="xs"
+              colorScheme="red"
+              onClick={() => onDeleteLocation?.(local.id)}
             >
               Remover
-            </button>
-          </div>
-        </div>
-      `;
+            </Button>
+          </HStack>
+        </Box>
+      );
 
-      marker.bindPopup(popupContent, {
+      root.render(
+        <ChakraProvider theme={theme}>
+          <PopupContent />
+        </ChakraProvider>
+      );
+
+      marker.bindPopup(popupNode, {
         maxWidth: 300,
         className: 'custom-popup',
       });
 
+      marker.on('popupclose', () => root.unmount());
       markerGroup.addLayer(marker);
     });
 
@@ -243,24 +246,28 @@ export function MapView({
         position="relative"
         sx={{
           '.leaflet-popup-content-wrapper': {
-            background: '#121826',
-            color: '#E5E7EB',
+            background: 'brand.surface',
+            color: 'brand.text',
             borderRadius: '8px',
-            border: '1px solid #2A3345',
+            border: '1px solid',
+            borderColor: 'brand.border',
           },
           '.leaflet-popup-tip': {
-            background: '#121826',
-            borderColor: '#2A3345',
+            background: 'brand.surface',
+            borderColor: 'brand.border',
           },
           '.leaflet-container': {
-            background: '#0B0F1A',
+            background: 'brand.bg',
           },
           '.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large': {
-            background: 'linear-gradient(135deg, #22D3EE, #A78BFA)',
-            border: '2px solid #121826',
+            background:
+              'linear-gradient(135deg, var(--chakra-colors-brand-accent-from), var(--chakra-colors-brand-accent-to))',
+            border: '2px solid',
+            borderColor: 'brand.surface',
           },
           '.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div': {
-            background: 'linear-gradient(135deg, #22D3EE, #A78BFA)',
+            background:
+              'linear-gradient(135deg, var(--chakra-colors-brand-accent-from), var(--chakra-colors-brand-accent-to))',
             color: 'white',
             fontWeight: '600',
           },
@@ -284,7 +291,7 @@ export function MapView({
             minW="200px"
           >
             <HStack spacing={2} mb={3}>
-              <MapPin size={16} color="#22D3EE" />
+              <MapPin size={16} color={accentColor} />
               <Text fontSize="sm" fontWeight="600">
                 Definir coordenadas aqui?
               </Text>
