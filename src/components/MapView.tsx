@@ -193,7 +193,7 @@ export function MapView({
       );
       mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
     }
-  }, [locals, clustering]);
+  }, [locals, clustering, onEditLocation, onDeleteLocation]);
 
   // Focar em localização específica
   useEffect(() => {

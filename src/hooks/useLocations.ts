@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Local } from '../types';
-import { generateId, validateLocal, getLocalsStats } from '../utils';
+import { generateId, validateLocal } from '../utils';
 
 const STORAGE_KEY = 'mapa-rotas-locais';
 
@@ -101,11 +101,6 @@ export function useLocations() {
     setLocals(prevLocals => prevLocals.filter(local => local.id !== id));
   }, []);
 
-  // Obter local por ID
-  const getLocalById = useCallback((id: string) => {
-    return locals.find(local => local.id === id);
-  }, [locals]);
-
   // Importar locais
   const importLocals = useCallback((newLocals: Local[], replaceAll = false) => {
     if (replaceAll) {
@@ -114,14 +109,6 @@ export function useLocations() {
       setLocals(prev => [...newLocals, ...prev]);
     }
   }, []);
-
-  // Limpar todos os locais
-  const clearAllLocals = useCallback(() => {
-    setLocals([]);
-  }, []);
-
-  // Estatísticas
-  const stats = getLocalsStats(locals);
 
   return {
     locals,

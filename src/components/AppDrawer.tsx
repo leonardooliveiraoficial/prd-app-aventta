@@ -43,7 +43,7 @@ import { Local, AppPreferences } from '../types';
 import { TopStats } from './TopStats';
 import { LocationsList } from './LocationsList';
 import { AddLocationModal } from './AddLocationModal';
-import { filterLocals, debounce, exportLocalsToJSON, validateImportData, mergeLocals } from '../utils';
+import { debounce, exportLocalsToJSON, validateImportData, mergeLocals } from '../utils';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 interface AppDrawerProps {

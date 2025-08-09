@@ -107,26 +107,15 @@ export function AddLocationModal({
   };
 
   const handlePlaceSelect = (place: GeocodingResult) => {
-    // Determinar o nome da cidade baseado no tipo e dados disponíveis
-    let cidadeNome = '';
-    
-    if (place.type === 'city' || place.city) {
-      // Se é classificado como cidade ou tem informação de cidade, usar a cidade
-      cidadeNome = place.city || place.name;
-    } else if (place.type === 'state' && place.city) {
-      // Se é classificado como estado mas tem informação de cidade, usar a cidade
-      cidadeNome = place.city;
-    } else {
-      // Caso contrário, usar o nome principal
-      cidadeNome = place.name;
-    }
-    
+    // Determinar o nome da cidade baseado nos dados disponíveis
+    const cidadeNome = place.city || place.name;
+
     // Preencher automaticamente os campos com os dados do lugar selecionado
     setFormData(prev => ({
       ...prev,
       cidade: cidadeNome,
       estado: place.state || '',
-      pais: place.country === 'Brasil' ? 'BR' : 
+      pais: place.country === 'Brasil' ? 'BR' :
             place.country === 'United States' ? 'US' :
             place.country === 'Argentina' ? 'AR' :
             place.country === 'Chile' ? 'CL' :
