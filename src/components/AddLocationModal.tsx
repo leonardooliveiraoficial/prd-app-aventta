@@ -18,6 +18,10 @@ import {
   Box,
   Badge,
   Flex,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  useToken,
 
 } from '@chakra-ui/react';
 import { MapPin, Save, X, Search, Zap, AlertTriangle } from 'lucide-react';
@@ -57,6 +61,7 @@ export function AddLocationModal({
   const [useSmartSearch, setUseSmartSearch] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const toast = useToast();
+  const [accentColor, errorColor] = useToken('colors', ['brand.accent.from', 'red.500']);
 
   // Preencher formulário quando modal abrir
   useEffect(() => {
@@ -226,7 +231,7 @@ export function AddLocationModal({
       <ModalContent>
         <ModalHeader>
           <HStack spacing={3}>
-            <MapPin size={24} color="#22D3EE" />
+            <MapPin size={24} color={accentColor} />
             <Text>
               {editingLocal ? 'Editar Local' : 'Adicionar Novo Local'}
             </Text>
@@ -238,7 +243,7 @@ export function AddLocationModal({
           <VStack spacing={4}>
             {errors.length > 0 && (
               <Alert status="error" borderRadius="8px">
-                <AlertTriangle size={16} color="#E53E3E" style={{ marginRight: 8, flexShrink: 0 }} />
+              <AlertTriangle size={16} color={errorColor} style={{ marginRight: 8, flexShrink: 0 }} />
                 <VStack align="start" spacing={1}>
                   {errors.map((error, index) => (
                     <Text key={index} fontSize="sm">
@@ -254,7 +259,7 @@ export function AddLocationModal({
               <Box w="full">
                 <Flex justify="space-between" align="center" mb={3}>
                   <HStack>
-                    <Search size={16} color="#22D3EE" />
+                    <Search size={16} color={accentColor} />
                     <Text fontSize="md" fontWeight="semibold" color="brand.text">
                       Busca Inteligente
                     </Text>
@@ -325,10 +330,8 @@ export function AddLocationModal({
                   </Flex>
                 )}
 
-                <VStack spacing={2} align="stretch">
-                  <Text fontSize="sm" color="brand.text" fontWeight="medium">
-                    Nome da cidade *
-                  </Text>
+                <FormControl isRequired>
+                  <FormLabel>Nome da cidade</FormLabel>
                   <Input
                     placeholder="Ex: Belo Horizonte"
                     value={formData.cidade}
@@ -338,14 +341,15 @@ export function AddLocationModal({
                     border="1px solid"
                     borderColor="brand.border"
                     _hover={{ borderColor: 'brand.primary' }}
-                    _focus={{ borderColor: 'brand.primary', boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)' }}
+                    _focus={{
+                      borderColor: 'brand.primary',
+                      boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)',
+                    }}
                   />
-                </VStack>
+                </FormControl>
 
-                <VStack spacing={2} align="stretch">
-                  <Text fontSize="sm" color="brand.text" fontWeight="medium">
-                    Estado
-                  </Text>
+                <FormControl>
+                  <FormLabel>Estado</FormLabel>
                   <Input
                     placeholder="Ex: Minas Gerais ou MG"
                     value={formData.estado}
@@ -354,14 +358,15 @@ export function AddLocationModal({
                     border="1px solid"
                     borderColor="brand.border"
                     _hover={{ borderColor: 'brand.primary' }}
-                    _focus={{ borderColor: 'brand.primary', boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)' }}
+                    _focus={{
+                      borderColor: 'brand.primary',
+                      boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)',
+                    }}
                   />
-                </VStack>
+                </FormControl>
 
-                <VStack spacing={2} align="stretch">
-                  <Text fontSize="sm" color="brand.text" fontWeight="medium">
-                    País *
-                  </Text>
+                <FormControl isRequired>
+                  <FormLabel>País</FormLabel>
                   <Select
                     value={formData.pais}
                     onChange={(e) => handleInputChange('pais', e.target.value)}
@@ -369,7 +374,10 @@ export function AddLocationModal({
                     border="1px solid"
                     borderColor="brand.border"
                     _hover={{ borderColor: 'brand.primary' }}
-                    _focus={{ borderColor: 'brand.primary', boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)' }}
+                    _focus={{
+                      borderColor: 'brand.primary',
+                      boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)',
+                    }}
                   >
                     {COUNTRIES.map((country) => (
                       <option key={country.code} value={country.code}>
@@ -377,15 +385,19 @@ export function AddLocationModal({
                       </option>
                     ))}
                   </Select>
-                </VStack>
+                </FormControl>
 
                 <HStack spacing={4} w="full">
-                  <VStack spacing={2} align="stretch" flex={1}>
-                    <Text fontSize="sm" color="brand.text" fontWeight="medium">
+                  <FormControl
+                    isRequired
+                    isInvalid={coordinateErrors.some(e => e.field === 'lat')}
+                    flex={1}
+                  >
+                    <FormLabel>
                       <Tooltip label="Latitude deve estar entre -90 e 90 graus">
                         Latitude *
                       </Tooltip>
-                    </Text>
+                    </FormLabel>
                     <Input
                       type="number"
                       step="any"
@@ -396,21 +408,26 @@ export function AddLocationModal({
                       border="1px solid"
                       borderColor={coordinateErrors.some(e => e.field === 'lat') ? 'red.500' : 'brand.border'}
                       _hover={{ borderColor: 'brand.primary' }}
-                      _focus={{ borderColor: 'brand.primary', boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)' }}
+                      _focus={{
+                        borderColor: 'brand.primary',
+                        boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)',
+                      }}
                     />
-                    {coordinateErrors.some(e => e.field === 'lat') && (
-                      <Text fontSize="xs" color="red.500">
-                        {coordinateErrors.find(e => e.field === 'lat')?.message}
-                      </Text>
-                    )}
-                  </VStack>
+                    <FormErrorMessage fontSize="xs">
+                      {coordinateErrors.find(e => e.field === 'lat')?.message}
+                    </FormErrorMessage>
+                  </FormControl>
 
-                  <VStack spacing={2} align="stretch" flex={1}>
-                    <Text fontSize="sm" color="brand.text" fontWeight="medium">
+                  <FormControl
+                    isRequired
+                    isInvalid={coordinateErrors.some(e => e.field === 'lng')}
+                    flex={1}
+                  >
+                    <FormLabel>
                       <Tooltip label="Longitude deve estar entre -180 e 180 graus">
                         Longitude *
                       </Tooltip>
-                    </Text>
+                    </FormLabel>
                     <Input
                       type="number"
                       step="any"
@@ -421,14 +438,15 @@ export function AddLocationModal({
                       border="1px solid"
                       borderColor={coordinateErrors.some(e => e.field === 'lng') ? 'red.500' : 'brand.border'}
                       _hover={{ borderColor: 'brand.primary' }}
-                      _focus={{ borderColor: 'brand.primary', boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)' }}
+                      _focus={{
+                        borderColor: 'brand.primary',
+                        boxShadow: '0 0 0 1px var(--chakra-colors-brand-primary)',
+                      }}
                     />
-                    {coordinateErrors.some(e => e.field === 'lng') && (
-                      <Text fontSize="xs" color="red.500">
-                        {coordinateErrors.find(e => e.field === 'lng')?.message}
-                      </Text>
-                    )}
-                  </VStack>
+                    <FormErrorMessage fontSize="xs">
+                      {coordinateErrors.find(e => e.field === 'lng')?.message}
+                    </FormErrorMessage>
+                  </FormControl>
                 </HStack>
 
                 <Box
