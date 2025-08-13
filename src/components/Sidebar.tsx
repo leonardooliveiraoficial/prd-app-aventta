@@ -421,7 +421,10 @@ export default function Sidebar({ onCityClick }: Props) {
             Lista de cidades, estados e países:
           </div>
           <ul style={UL_STYLE(isMobile)}>
-            {locations.map((loc, i) => (
+            {locations
+              .filter(loc => loc.city)
+              .sort((a, b) => a.city!.localeCompare(b.city!, 'pt-BR', { sensitivity: 'base' }))
+              .map((loc, i) => (
               <li
                 key={i}
                 style={{
