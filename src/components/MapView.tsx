@@ -1,322 +1,254 @@
-import { useEffect, useRef, useState } from 'react';
-import { Box, Portal, Button, HStack, Text } from '@chakra-ui/react';
-import { MapPin, X, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import { useLocations, CreateLocationInput, UpdateLocationInput, Location } from '../data/locationsStore';
+import { useToast } from '../hooks/useToast';
+import LocationModal from '../components/LocationModal';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import 'leaflet.markercluster';
-import { Local } from '../types';
-import { getCountryFlag } from '../utils';
+import Sidebar from './Sidebar';
 
-// Fix para ícones do Leaflet
-delete (L.Icon.Default.prototype as Record<string, unknown>)._getIconUrl;
+// Corrige ícones padrão do Leaflet
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-interface MapViewProps {
-  locals: Local[];
-  onRightClick?: (lat: number, lng: number) => void;
-  onEditLocation?: (local: Local) => void;
-  onDeleteLocation?: (id: string) => void;
-  focusLocation?: { lat: number; lng: number } | null;
-  clustering?: boolean;
-  rightClickSuggestion?: boolean;
+// Componente auxiliar para mudar centro/zoom
+function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map]);
+  return null;
 }
 
-interface TooltipState {
-  visible: boolean;
-  x: number;
-  y: number;
-  lat: number;
-  lng: number;
-}
-
-export function MapView({
-  locals,
-  onRightClick,
-  onEditLocation,
-  onDeleteLocation,
-  focusLocation,
-  clustering = true,
-  rightClickSuggestion = true,
-}: MapViewProps) {
-  const mapRef = useRef<L.Map | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const markersRef = useRef<L.MarkerClusterGroup | L.LayerGroup | null>(null);
-  const [tooltip, setTooltip] = useState<TooltipState>({
-    visible: false,
-    x: 0,
-    y: 0,
-    lat: 0,
-    lng: 0,
+// Componente para capturar cliques no mapa
+function MapClickHandler({ 
+  onMapClick, 
+  tempMarker 
+}: { 
+  onMapClick: (lat: number, lng: number) => void;
+  tempMarker: { lat: number; lng: number } | null;
+}) {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      onMapClick(lat, lng);
+    },
   });
 
-  // Inicializar mapa
-  useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return;
-
-    const map = L.map(mapContainerRef.current, {
-      center: [-19.9167, -43.9345], // Belo Horizonte como centro padrão
-      zoom: 6,
-      zoomControl: true,
-    });
-
-    // Adicionar tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 18,
-    }).addTo(map);
-
-    // Configurar clique direito
-    if (rightClickSuggestion) {
-      map.on('contextmenu', (e: L.LeafletMouseEvent) => {
-        const { lat, lng } = e.latlng;
-        const containerPoint = map.latLngToContainerPoint(e.latlng);
-        
-        setTooltip({
-          visible: true,
-          x: containerPoint.x,
-          y: containerPoint.y,
-          lat,
-          lng,
-        });
-      });
-
-      // Fechar tooltip ao clicar no mapa
-      map.on('click', () => {
-        setTooltip(prev => ({ ...prev, visible: false }));
-      });
-    }
-
-    mapRef.current = map;
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [rightClickSuggestion]);
-
-  // Atualizar marcadores
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    // Remover marcadores existentes
-    if (markersRef.current) {
-      mapRef.current.removeLayer(markersRef.current);
-    }
-
-    // Criar novo grupo de marcadores
-    const markerGroup = clustering
-      ? L.markerClusterGroup({
-          chunkedLoading: true,
-          spiderfyOnMaxZoom: true,
-          showCoverageOnHover: false,
-          zoomToBoundsOnClick: true,
-          maxClusterRadius: 50,
-        })
-      : L.layerGroup();
-
-    // Adicionar marcadores
-    locals.forEach((local) => {
-      const marker = L.marker([local.lat, local.lng]);
-      
-      const flag = getCountryFlag(local.pais);
-      const popupContent = `
-        <div style="font-family: Inter, sans-serif; min-width: 200px;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="font-size: 18px;">${flag}</span>
-            <strong style="font-size: 16px; color: #E5E7EB;">${local.cidade}</strong>
-          </div>
-          <div style="color: #9CA3AF; font-size: 14px; margin-bottom: 12px;">
-            ${local.estado ? `${local.estado}, ` : ''}${local.pais}
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button 
-              onclick="window.editLocation('${local.id}')"
-              style="
-                background: linear-gradient(135deg, #22D3EE, #A78BFA);
-                color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-size: 12px;
-                cursor: pointer;
-                font-weight: 500;
-              "
-            >
-              Editar
-            </button>
-            <button 
-              onclick="window.deleteLocation('${local.id}')"
-              style="
-                background: #F43F5E;
-                color: white;
-                border: none;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-size: 12px;
-                cursor: pointer;
-                font-weight: 500;
-              "
-            >
-              Remover
-            </button>
-          </div>
+  return tempMarker ? (
+    <Marker 
+      position={[tempMarker.lat, tempMarker.lng]}
+      icon={L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+        className: 'temp-marker'
+      })}
+    >
+      <Popup>
+        <div style={{ textAlign: 'center' }}>
+          <strong>Novo Local</strong><br />
+          <small>Clique em "Adicionar" para salvar</small>
         </div>
-      `;
+      </Popup>
+    </Marker>
+  ) : null;
+}
 
-      marker.bindPopup(popupContent, {
-        maxWidth: 300,
-        className: 'custom-popup',
-      });
+export default function MapView() {
+  const [center, setCenter] = useState<[number, number]>([-20, -45]);
+  const [zoom, setZoom] = useState(5);
+  const [tempMarker, setTempMarker] = useState<{ lat: number; lng: number } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLocation, setEditingLocation] = useState<Location | null>(null);
+  
+  const { locations, addLocation, updateLocation, removeLocation } = useLocations();
+  const { showToast } = useToast();
 
-      markerGroup.addLayer(marker);
-    });
+  // Função chamada ao clicar na cidade
+  function handleCityClick(lat: number, lng: number) {
+    setCenter([lat, lng]);
+    setZoom(12); // Zoom mais afastado ao clicar
+  }
 
-    // Adicionar ao mapa
-    mapRef.current.addLayer(markerGroup);
-    markersRef.current = markerGroup;
+  // Função para capturar clique no mapa
+  function handleMapClick(lat: number, lng: number) {
+    setTempMarker({ lat, lng });
+    setEditingLocation(null);
+    setIsModalOpen(true);
+  }
 
-    // Ajustar visualização se houver marcadores
-    if (locals.length > 0) {
-      const group = new L.FeatureGroup(
-        locals.map(local => L.marker([local.lat, local.lng]))
-      );
-      mapRef.current.fitBounds(group.getBounds(), { padding: [20, 20] });
-    }
-  }, [locals, clustering]);
-
-  // Focar em localização específica
-  useEffect(() => {
-    if (!mapRef.current || !focusLocation) return;
-
-    mapRef.current.setView([focusLocation.lat, focusLocation.lng], 12, {
-      animate: true,
-      duration: 1,
-    });
-  }, [focusLocation]);
-
-  // Configurar callbacks globais para popups
-  useEffect(() => {
-    (window as Record<string, unknown>).editLocation = (id: string) => {
-      const local = locals.find(l => l.id === id);
-      if (local && onEditLocation) {
-        onEditLocation(local);
+  // Função para salvar nova localização
+  function handleSaveLocation(locationData: CreateLocationInput | UpdateLocationInput) {
+    try {
+      if (editingLocation) {
+        // Editando localização existente
+        updateLocation(editingLocation.id, locationData);
+        showToast('Local atualizado com sucesso!', 'success');
+      } else {
+        // Adicionando nova localização
+        const newLocation: CreateLocationInput = {
+          ...locationData,
+          label: locationData.label ?? 'Novo Local',
+          countryCode: locationData.countryCode ?? 'BR',
+          lat: tempMarker?.lat ?? locationData.lat ?? 0,
+          lng: tempMarker?.lng ?? locationData.lng ?? 0,
+        };
+        addLocation(newLocation);
+        showToast('Local adicionado com sucesso!', 'success');
       }
-    };
-
-    (window as Record<string, unknown>).deleteLocation = (id: string) => {
-      if (onDeleteLocation) {
-        onDeleteLocation(id);
-      }
-    };
-
-    return () => {
-      delete (window as Record<string, unknown>).editLocation;
-      delete (window as Record<string, unknown>).deleteLocation;
-    };
-  }, [locals, onEditLocation, onDeleteLocation]);
-
-  const handleConfirmCoordinates = () => {
-    if (onRightClick) {
-      onRightClick(tooltip.lat, tooltip.lng);
+      
+      setIsModalOpen(false);
+      setTempMarker(null);
+      setEditingLocation(null);
+    } catch {
+      showToast('Erro ao salvar local. Tente novamente.', 'error');
     }
-    setTooltip(prev => ({ ...prev, visible: false }));
-  };
+  }
 
-  const handleCancelCoordinates = () => {
-    setTooltip(prev => ({ ...prev, visible: false }));
-  };
+  // Função para editar localização
+  function handleEditLocation(location: Location) {
+    setEditingLocation(location);
+    setTempMarker(null);
+    setIsModalOpen(true);
+  }
 
+  // Função para remover localização
+  function handleRemoveLocation(locationId: string) {
+    if (window.confirm('Tem certeza que deseja remover este local?')) {
+      removeLocation(locationId);
+      showToast('Local removido com sucesso!', 'success');
+    }
+  }
+
+  // Função para fechar modal
+  function handleCloseModal() {
+    setIsModalOpen(false);
+    setTempMarker(null);
+    setEditingLocation(null);
+  }
+
+  // Limites do mundo (latitude: -85 a 85, longitude: -180 a 180)
+  const bounds: L.LatLngBoundsExpression = [[-85, -180], [85, 180]];
   return (
-    <>
-      <Box
-        ref={mapContainerRef}
-        w="100%"
-        h="100vh"
-        position="relative"
-        sx={{
-          '.leaflet-popup-content-wrapper': {
-            background: '#121826',
-            color: '#E5E7EB',
-            borderRadius: '8px',
-            border: '1px solid #2A3345',
-          },
-          '.leaflet-popup-tip': {
-            background: '#121826',
-            borderColor: '#2A3345',
-          },
-          '.leaflet-container': {
-            background: '#0B0F1A',
-          },
-          '.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large': {
-            background: 'linear-gradient(135deg, #22D3EE, #A78BFA)',
-            border: '2px solid #121826',
-          },
-          '.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div': {
-            background: 'linear-gradient(135deg, #22D3EE, #A78BFA)',
-            color: 'white',
-            fontWeight: '600',
-          },
+    <div>
+      <Sidebar onCityClick={handleCityClick} />
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        zoomControl={false}
+        scrollWheelZoom={true}
+        minZoom={3}
+        maxZoom={17}
+        maxBounds={bounds}
+        preferCanvas={true}
+        style={{
+          height: '100vh',
+          width: '100vw',
+          zIndex: 1,
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          background: '#242424'
         }}
-      />
-
-      {/* Tooltip de coordenadas */}
-      {tooltip.visible && (
-        <Portal>
-          <Box
-            position="fixed"
-            left={`${tooltip.x + 10}px`}
-            top={`${tooltip.y - 10}px`}
-            bg="brand.surface"
-            border="1px solid"
-            borderColor="brand.border"
-            borderRadius="8px"
-            p={3}
-            boxShadow="lg"
-            zIndex={10000}
-            minW="200px"
+        className="leaflet-container"
+      >
+        <ChangeView center={center} zoom={zoom} />
+        <TileLayer
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <MapClickHandler onMapClick={handleMapClick} tempMarker={tempMarker} />
+        
+        {locations.map((location) => (
+          <Marker 
+            key={location.id} 
+            position={[location.lat, location.lng]}
+            draggable={true}
+            eventHandlers={{
+              dragend: (e) => {
+                const marker = e.target;
+                const position = marker.getLatLng();
+                updateLocation(location.id, {
+                  lat: position.lat,
+                  lng: position.lng
+                });
+                showToast('Coordenadas atualizadas!', 'success');
+              },
+            }}
           >
-            <HStack spacing={2} mb={3}>
-              <MapPin size={16} color="#22D3EE" />
-              <Text fontSize="sm" fontWeight="600">
-                Definir coordenadas aqui?
-              </Text>
-            </HStack>
-            
-            <Text fontSize="xs" color="brand.muted" mb={3}>
-              Lat: {tooltip.lat.toFixed(6)}, Lng: {tooltip.lng.toFixed(6)}
-            </Text>
-
-            <HStack spacing={2}>
-              <Button
-                size="sm"
-                variant="gradient"
-                leftIcon={<Check size={14} />}
-                onClick={handleConfirmCoordinates}
-                flex={1}
-              >
-                Sim
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                leftIcon={<X size={14} />}
-                onClick={handleCancelCoordinates}
-                flex={1}
-              >
-                Cancelar
-              </Button>
-            </HStack>
-          </Box>
-        </Portal>
-      )}
-    </>
+            <Popup>
+              <div style={{ minWidth: '200px', textAlign: 'center' }}>
+                <strong style={{ fontSize: '16px', color: '#333' }}>{location.label}</strong><br />
+                <div style={{ margin: '8px 0', color: '#666', fontSize: '14px' }}>
+                  {location.city && `${location.city}, `}
+                  {location.state && `${location.state}, `}
+                  {location.countryCode}
+                </div>
+                <div style={{ margin: '8px 0', color: '#888', fontSize: '12px' }}>
+                  {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '8px', 
+                  marginTop: '12px',
+                  justifyContent: 'center'
+                }}>
+                  <button
+                    onClick={() => handleEditLocation(location)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid #007bff',
+                      background: '#007bff',
+                      color: '#fff',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      fontFamily: 'Sora, Arial, sans-serif'
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                  <button
+                    onClick={() => handleRemoveLocation(location.id)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: '1px solid #dc3545',
+                      background: '#dc3545',
+                      color: '#fff',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      fontFamily: 'Sora, Arial, sans-serif'
+                    }}
+                  >
+                    🗑️ Remover
+                  </button>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+      
+      {/* Modal para adicionar/editar localização */}
+      <LocationModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveLocation}
+        initialData={editingLocation || (tempMarker ? {
+          lat: tempMarker.lat,
+          lng: tempMarker.lng
+        } : undefined)}
+      />
+    </div>
   );
 }
