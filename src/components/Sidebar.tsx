@@ -239,7 +239,7 @@ export default function Sidebar({ onCityClick }: Props) {
   const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
   const isMobile = screenWidth <= 480;
   const isTablet = screenWidth > 480 && screenWidth <= 768;
-  const isDesktop = screenWidth > 768;
+
   const total = locations.length;
   const estados = useMemo(() => Array.from(new Set(locations.map(l => l.state).filter(e => e && e.trim() !== ''))), [locations]);
   const paises = useMemo(() => Array.from(new Set(locations.map(l => l.countryCode))), [locations]);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CreateLocationInput, Location } from '../data/locationsStore';
+import { COUNTRIES } from '../constants/countries';
 
 interface LocationModalProps {
   isOpen: boolean;
@@ -490,37 +491,78 @@ export default function LocationModal({
               fontSize: '14px',
               color: '#d1d5db'
             }}>
-              Código do País * (2 letras)
+              País *
             </label>
-            <input
-              type="text"
-              value={formData.countryCode}
-              onChange={e => handleInputChange('countryCode', e.target.value.toUpperCase())}
-              placeholder="BR"
-              maxLength={2}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                border: errors.countryCode ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
-                background: 'rgba(32, 32, 44, 0.8)',
+            <div style={{ position: 'relative' }}>
+              <select
+                value={formData.countryCode}
+                onChange={e => handleInputChange('countryCode', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  border: errors.countryCode ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
+                  background: 'rgba(32, 32, 44, 0.8)',
+                  color: 'transparent',
+                  fontSize: '16px',
+                  fontFamily: 'Sora, Arial, sans-serif',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer',
+                  appearance: 'none'
+                }}
+                onFocus={e => {
+                  if (!errors.countryCode) {
+                    e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
+                  }
+                }}
+                onBlur={e => {
+                  if (!errors.countryCode) {
+                    e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
+                  }
+                }}
+              >
+                {COUNTRIES.map(country => (
+                  <option 
+                    key={country.code} 
+                    value={country.code}
+                    style={{
+                      background: 'rgba(32, 32, 44, 0.95)',
+                      color: '#fff'
+                    }}
+                  >
+                    {country.flag} - {country.name}
+                  </option>
+                ))}
+              </select>
+              {/* Exibir apenas a sigla e bandeira no campo */}
+              <div style={{
+                position: 'absolute',
+                left: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
                 color: '#fff',
-                fontSize: '16px',
+                fontSize: '22px',
                 fontFamily: 'Sora, Arial, sans-serif',
-                outline: 'none',
-                boxSizing: 'border-box'
-              }}
-              onFocus={e => {
-                if (!errors.countryCode) {
-                  e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
-                }
-              }}
-              onBlur={e => {
-                if (!errors.countryCode) {
-                  e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
-                }
-              }}
-            />
+                lineHeight: '1',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                {COUNTRIES.find(c => c.code === formData.countryCode)?.flag}
+              </div>
+              {/* Seta do select */}
+              <div style={{
+                position: 'absolute',
+                right: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+                color: '#fff'
+              }}>
+                ▼
+              </div>
+            </div>
             {errors.countryCode && (
               <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
                 {errors.countryCode}
@@ -538,7 +580,7 @@ export default function LocationModal({
                 fontSize: '14px',
                 color: '#d1d5db'
               }}>
-                Estado *
+                Estado * (2 letras)
               </label>
               <input
                 type="text"
