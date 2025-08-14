@@ -68,7 +68,7 @@ export default function MapView() {
   const [zoom, setZoom] = useState(5);
   const [tempMarker, setTempMarker] = useState<{ lat: number; lng: number } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingLocation, setEditingLocation] = useState<Location | null>(null);
+  const [editingLocation, setEditingLocation] = useState<Location | undefined>(undefined);
   
   const { locations, addLocation, updateLocation, removeLocation } = useLocations();
   const { showToast } = useToast();
@@ -82,7 +82,7 @@ export default function MapView() {
   // Função para capturar clique no mapa
   function handleMapClick(lat: number, lng: number) {
     setTempMarker({ lat, lng });
-    setEditingLocation(null);
+    setEditingLocation(undefined);
     setIsModalOpen(true);
   }
 
@@ -108,7 +108,7 @@ export default function MapView() {
       
       setIsModalOpen(false);
       setTempMarker(null);
-      setEditingLocation(null);
+      setEditingLocation(undefined);
     } catch {
       showToast('Erro ao salvar local. Tente novamente.', 'error');
     }
@@ -133,7 +133,7 @@ export default function MapView() {
   function handleCloseModal() {
     setIsModalOpen(false);
     setTempMarker(null);
-    setEditingLocation(null);
+    setEditingLocation(undefined);
   }
 
   // Limites do mundo (latitude: -85 a 85, longitude: -180 a 180)
@@ -203,7 +203,11 @@ export default function MapView() {
                   justifyContent: 'center'
                 }}>
                   <button
-                    onClick={() => handleEditLocation(location)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEditLocation(location);
+                    }}
                     style={{
                       padding: '6px 12px',
                       borderRadius: '4px',
@@ -218,7 +222,11 @@ export default function MapView() {
                     ✏️ Editar
                   </button>
                   <button
-                    onClick={() => handleRemoveLocation(location.id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveLocation(location.id);
+                    }}
                     style={{
                       padding: '6px 12px',
                       borderRadius: '4px',
@@ -244,6 +252,8 @@ export default function MapView() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveLocation}
+        onRemove={handleRemoveLocation}
+        editingLocation={editingLocation}
         initialData={editingLocation || (tempMarker ? {
           lat: tempMarker.lat,
           lng: tempMarker.lng

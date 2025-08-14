@@ -5,6 +5,7 @@ interface LocationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (location: CreateLocationInput) => void;
+  onRemove?: (locationId: string) => void;
   initialData?: Partial<CreateLocationInput>;
   editingLocation?: Location;
   title?: string;
@@ -16,6 +17,8 @@ interface FormErrors {
   countryCode?: string;
   lat?: string;
   lng?: string;
+  state?: string;
+  city?: string;
 }
 
 interface ReverseGeocodingData {
@@ -28,6 +31,7 @@ export default function LocationModal({
   isOpen,
   onClose,
   onSave,
+  onRemove,
   initialData,
   editingLocation,
   title,
@@ -148,9 +152,10 @@ export default function LocationModal({
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.label.trim()) {
-      newErrors.label = 'Nome do local é obrigatório';
-    }
+    // Nome do local agora é opcional
+    // if (!formData.label.trim()) {
+    //   newErrors.label = 'Nome do local é obrigatório';
+    // }
 
     if (!formData.countryCode.trim()) {
       newErrors.countryCode = 'Código do país é obrigatório';
@@ -158,11 +163,23 @@ export default function LocationModal({
       newErrors.countryCode = 'Código do país deve ter 2 letras';
     }
 
-    if (formData.lat < -90 || formData.lat > 90) {
+    if (!formData.state?.trim()) {
+      newErrors.state = 'Estado é obrigatório';
+    }
+
+    if (!formData.city?.trim()) {
+      newErrors.city = 'Cidade é obrigatório';
+    }
+
+    if (formData.lat === 0 || formData.lat === null || formData.lat === undefined) {
+      newErrors.lat = 'Latitude é obrigatória';
+    } else if (formData.lat < -90 || formData.lat > 90) {
       newErrors.lat = 'Latitude deve estar entre -90 e 90';
     }
 
-    if (formData.lng < -180 || formData.lng > 180) {
+    if (formData.lng === 0 || formData.lng === null || formData.lng === undefined) {
+      newErrors.lng = 'Longitude é obrigatória';
+    } else if (formData.lng < -180 || formData.lng > 180) {
       newErrors.lng = 'Longitude deve estar entre -180 e 180';
     }
 
@@ -311,7 +328,7 @@ export default function LocationModal({
               fontSize: '14px',
               color: '#d1d5db'
             }}>
-              Nome do Local *
+              Nome do Local (opcional)
             </label>
             <input
               ref={firstInputRef}
@@ -380,6 +397,16 @@ export default function LocationModal({
                   outline: 'none',
                   boxSizing: 'border-box'
                 }}
+                onFocus={e => {
+                  if (!errors.lat) {
+                    e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
+                  }
+                }}
+                onBlur={e => {
+                  if (!errors.lat) {
+                    e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
+                  }
+                }}
               />
               {errors.lat && (
                 <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
@@ -414,6 +441,16 @@ export default function LocationModal({
                   fontFamily: 'Sora, Arial, sans-serif',
                   outline: 'none',
                   boxSizing: 'border-box'
+                }}
+                onFocus={e => {
+                  if (!errors.lng) {
+                    e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
+                  }
+                }}
+                onBlur={e => {
+                  if (!errors.lng) {
+                    e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
+                  }
                 }}
               />
               {errors.lng && (
@@ -465,6 +502,16 @@ export default function LocationModal({
                 outline: 'none',
                 boxSizing: 'border-box'
               }}
+              onFocus={e => {
+                if (!errors.countryCode) {
+                  e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
+                }
+              }}
+              onBlur={e => {
+                if (!errors.countryCode) {
+                  e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
+                }
+              }}
             />
             {errors.countryCode && (
               <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
@@ -483,7 +530,7 @@ export default function LocationModal({
                 fontSize: '14px',
                 color: '#d1d5db'
               }}>
-                Estado (opcional)
+                Estado *
               </label>
               <input
                 type="text"
@@ -494,7 +541,7 @@ export default function LocationModal({
                   width: '100%',
                   padding: '12px 16px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(80, 80, 120, 0.3)',
+                  border: errors.state ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#fff',
                   fontSize: '16px',
@@ -502,7 +549,22 @@ export default function LocationModal({
                   outline: 'none',
                   boxSizing: 'border-box'
                 }}
+                onFocus={e => {
+                  if (!errors.state) {
+                    e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
+                  }
+                }}
+                onBlur={e => {
+                  if (!errors.state) {
+                    e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
+                  }
+                }}
               />
+              {errors.state && (
+                <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                  Estado é obrigatório
+                </span>
+              )}
             </div>
             <div>
               <label style={{ 
@@ -512,7 +574,7 @@ export default function LocationModal({
                 fontSize: '14px',
                 color: '#d1d5db'
               }}>
-                Cidade (opcional)
+                Cidade *
               </label>
               <input
                 type="text"
@@ -523,7 +585,7 @@ export default function LocationModal({
                   width: '100%',
                   padding: '12px 16px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(80, 80, 120, 0.3)',
+                  border: errors.city ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#fff',
                   fontSize: '16px',
@@ -531,73 +593,131 @@ export default function LocationModal({
                   outline: 'none',
                   boxSizing: 'border-box'
                 }}
+                onFocus={e => {
+                  if (!errors.city) {
+                    e.target.style.borderColor = 'rgba(38, 230, 255, 0.6)';
+                  }
+                }}
+                onBlur={e => {
+                  if (!errors.city) {
+                    e.target.style.borderColor = 'rgba(80, 80, 120, 0.3)';
+                  }
+                }}
               />
+              {errors.city && (
+                <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                  Cidade é obrigatório
+                </span>
+              )}
             </div>
           </div>
 
           {/* Botões */}
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              style={{
-                padding: '12px 24px',
-                borderRadius: '12px',
-                border: '1px solid rgba(80, 80, 120, 0.3)',
-                background: 'rgba(32, 32, 44, 0.8)',
-                color: '#d1d5db',
-                fontSize: '16px',
-                fontWeight: 600,
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                fontFamily: 'Sora, Arial, sans-serif',
-                transition: 'all 0.2s',
-                opacity: isLoading ? 0.5 : 1
-              }}
-              onMouseOver={e => {
-                if (!isLoading) {
-                  (e.target as HTMLElement).style.background = 'rgba(60, 60, 80, 0.8)';
-                }
-              }}
-              onMouseOut={e => {
-                if (!isLoading) {
-                  (e.target as HTMLElement).style.background = 'rgba(32, 32, 44, 0.8)';
-                }
-              }}
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading || isGeocodingLoading}
-              style={{
-                padding: '12px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                background: isLoading || isGeocodingLoading 
-                  ? 'rgba(80, 80, 120, 0.5)' 
-                  : 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
-                color: '#fff',
-                fontSize: '16px',
-                fontWeight: 600,
-                cursor: isLoading || isGeocodingLoading ? 'not-allowed' : 'pointer',
-                fontFamily: 'Sora, Arial, sans-serif',
-                transition: 'all 0.2s',
-                opacity: isLoading || isGeocodingLoading ? 0.7 : 1
-              }}
-              onMouseOver={e => {
-                if (!isLoading && !isGeocodingLoading) {
-                  (e.target as HTMLElement).style.background = 'linear-gradient(90deg, #6c3fdc 60%, #26e6ff 100%)';
-                }
-              }}
-              onMouseOut={e => {
-                if (!isLoading && !isGeocodingLoading) {
-                  (e.target as HTMLElement).style.background = 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)';
-                }
-              }}
-            >
-              {isLoading ? 'Salvando...' : isGeocodingLoading ? 'Carregando...' : 'Salvar'}
-            </button>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: editingLocation && onRemove ? 'space-between' : 'flex-end' }}>
+            {/* Botão Remover - só aparece quando editando */}
+            {editingLocation && onRemove && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (window.confirm('Tem certeza que deseja remover este local?')) {
+                    onRemove(editingLocation.id);
+                    onClose();
+                  }
+                }}
+                disabled={isLoading}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  border: '1px solid #dc3545',
+                  background: 'rgba(220, 53, 69, 0.8)',
+                  color: '#fff',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Sora, Arial, sans-serif',
+                  transition: 'all 0.2s',
+                  opacity: isLoading ? 0.5 : 1
+                }}
+                onMouseOver={e => {
+                  if (!isLoading) {
+                    (e.target as HTMLElement).style.background = 'rgba(220, 53, 69, 1)';
+                  }
+                }}
+                onMouseOut={e => {
+                  if (!isLoading) {
+                    (e.target as HTMLElement).style.background = 'rgba(220, 53, 69, 0.8)';
+                  }
+                }}
+              >
+                🗑️ Remover
+              </button>
+            )}
+            
+            {/* Botões Cancelar e Salvar */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isLoading}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(80, 80, 120, 0.3)',
+                  background: 'rgba(32, 32, 44, 0.8)',
+                  color: '#d1d5db',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Sora, Arial, sans-serif',
+                  transition: 'all 0.2s',
+                  opacity: isLoading ? 0.5 : 1
+                }}
+                onMouseOver={e => {
+                  if (!isLoading) {
+                    (e.target as HTMLElement).style.background = 'rgba(60, 60, 80, 0.8)';
+                  }
+                }}
+                onMouseOut={e => {
+                  if (!isLoading) {
+                    (e.target as HTMLElement).style.background = 'rgba(32, 32, 44, 0.8)';
+                  }
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading || isGeocodingLoading}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: isLoading || isGeocodingLoading 
+                    ? 'rgba(80, 80, 120, 0.5)' 
+                    : 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
+                  color: '#fff',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  cursor: isLoading || isGeocodingLoading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Sora, Arial, sans-serif',
+                  transition: 'all 0.2s',
+                  opacity: isLoading || isGeocodingLoading ? 0.7 : 1
+                }}
+                onMouseOver={e => {
+                  if (!isLoading && !isGeocodingLoading) {
+                    (e.target as HTMLElement).style.background = 'linear-gradient(90deg, #6c3fdc 60%, #26e6ff 100%)';
+                  }
+                }}
+                onMouseOut={e => {
+                  if (!isLoading && !isGeocodingLoading) {
+                    (e.target as HTMLElement).style.background = 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)';
+                  }
+                }}
+              >
+                {isLoading ? 'Salvando...' : isGeocodingLoading ? 'Carregando...' : 'Salvar'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
