@@ -449,7 +449,7 @@ export default function Sidebar({ onCityClick }: Props) {
                   (e.target as HTMLElement).style.transform = 'translateY(0)';
                 }}
               >
-                <span>📤</span> {isMobile ? 'Exp' : isTablet ? 'Export' : 'Exportar'}
+                <span>📤</span> Exportar
               </button>
               
               <button
@@ -478,7 +478,7 @@ export default function Sidebar({ onCityClick }: Props) {
                   (e.target as HTMLElement).style.transform = 'translateY(0)';
                 }}
               >
-                <span>📥</span> {isMobile ? 'Imp' : isTablet ? 'Import' : 'Importar'}
+                <span>📥</span> Importar
               </button>
             </div>
           </div>
