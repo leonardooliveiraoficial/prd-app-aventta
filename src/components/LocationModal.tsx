@@ -535,7 +535,7 @@ export default function LocationModal({
                   </option>
                 ))}
               </select>
-              {/* Exibir apenas a sigla e bandeira no campo */}
+              {/* Exibir sigla, bandeira e nome do país no campo */}
               <div style={{
                 position: 'absolute',
                 left: '16px',
@@ -543,13 +543,16 @@ export default function LocationModal({
                 transform: 'translateY(-50%)',
                 pointerEvents: 'none',
                 color: '#fff',
-                fontSize: '22px',
+                fontSize: '16px',
                 fontFamily: 'Sora, Arial, sans-serif',
                 lineHeight: '1',
                 display: 'flex',
                 alignItems: 'center'
               }}>
-                {COUNTRIES.find(c => c.code === formData.countryCode)?.flag}
+                {(() => {
+                  const selectedCountry = COUNTRIES.find(c => c.code === formData.countryCode);
+                  return selectedCountry ? `${selectedCountry.code} - ${selectedCountry.name}` : '';
+                })()}
               </div>
               {/* Seta do select */}
               <div style={{
