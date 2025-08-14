@@ -1,6 +1,6 @@
 
 import { useMemo, useState, useRef } from 'react';
-import { useLocations, CreateLocationInput } from '../data/locationsStore';
+import { useSupabaseLocations as useLocations, CreateLocationInput } from '../data/supabaseLocationsStore';
 import { getCountryFlag } from '../utils/locationUtils';
 import { useToast } from '../hooks/useToast';
 import LocationModal from './LocationModal';
@@ -250,8 +250,8 @@ export default function Sidebar({ onCityClick }: Props) {
   }
 
   // Função para salvar novo local
-  const handleSaveLocation = (locationData: CreateLocationInput) => {
-    const success = addLocation(locationData);
+  const handleSaveLocation = async (locationData: CreateLocationInput) => {
+    const success = await addLocation(locationData);
     if (success) {
       setIsModalOpen(false);
       showToast('Local adicionado com sucesso!', 'success');
@@ -289,10 +289,10 @@ export default function Sidebar({ onCityClick }: Props) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const jsonData = e.target?.result as string;
-        const success = importLocations(jsonData);
+        const success = await importLocations(jsonData);
         if (success) {
           showToast('Locais importados com sucesso!', 'success');
         } else {

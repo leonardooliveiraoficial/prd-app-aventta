@@ -1,5 +1,5 @@
 import MapView from './components/MapView';
-import { LocationProvider } from './data/locationsStore';
+import { SupabaseLocationProvider } from './data/supabaseLocationsStore';
 import { ToastProvider } from './contexts/ToastContext';
 import { ToastContainer } from './components/Toast';
 import { useToast } from './hooks/useToast';
@@ -17,11 +17,11 @@ function AppContent() {
 
 function App() {
   return (
-    <LocationProvider>
+    <SupabaseLocationProvider>
       <ToastProvider>
         <AppContent />
       </ToastProvider>
-    </LocationProvider>
+    </SupabaseLocationProvider>
   );
 }
 

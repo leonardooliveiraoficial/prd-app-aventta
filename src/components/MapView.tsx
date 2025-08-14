@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
-import { useLocations, CreateLocationInput, UpdateLocationInput, Location } from '../data/locationsStore';
+import { useSupabaseLocations as useLocations, CreateLocationInput, UpdateLocationInput, Location } from '../data/supabaseLocationsStore';
 import { useToast } from '../hooks/useToast';
 import LocationModal from '../components/LocationModal';
 import L from 'leaflet';
@@ -87,11 +87,11 @@ export default function MapView() {
   }
 
   // Função para salvar nova localização
-  function handleSaveLocation(locationData: CreateLocationInput | UpdateLocationInput) {
+  async function handleSaveLocation(locationData: CreateLocationInput | UpdateLocationInput) {
     try {
       if (editingLocation) {
         // Editando localização existente
-        updateLocation(editingLocation.id, locationData);
+        await updateLocation(editingLocation.id, locationData);
         showToast('Local atualizado com sucesso!', 'success');
       } else {
         // Adicionando nova localização
@@ -102,7 +102,7 @@ export default function MapView() {
           lat: tempMarker?.lat ?? locationData.lat ?? 0,
           lng: tempMarker?.lng ?? locationData.lng ?? 0,
         };
-        addLocation(newLocation);
+        await addLocation(newLocation);
         showToast('Local adicionado com sucesso!', 'success');
       }
       
@@ -122,9 +122,9 @@ export default function MapView() {
   }
 
   // Função para remover localização
-  function handleRemoveLocation(locationId: string) {
+  async function handleRemoveLocation(locationId: string) {
     if (window.confirm('Tem certeza que deseja remover este local?')) {
-      removeLocation(locationId);
+      await removeLocation(locationId);
       showToast('Local removido com sucesso!', 'success');
     }
   }
@@ -174,10 +174,10 @@ export default function MapView() {
             position={[location.lat, location.lng]}
             draggable={true}
             eventHandlers={{
-              dragend: (e) => {
+              dragend: async (e) => {
                 const marker = e.target;
                 const position = marker.getLatLng();
-                updateLocation(location.id, {
+                await updateLocation(location.id, {
                   lat: position.lat,
                   lng: position.lng
                 });

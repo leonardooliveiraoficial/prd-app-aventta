@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CreateLocationInput, Location } from '../data/locationsStore';
+import { CreateLocationInput, Location } from '../data/supabaseLocationsStore';
 import { COUNTRIES } from '../constants/countries';
 
 interface LocationModalProps {
