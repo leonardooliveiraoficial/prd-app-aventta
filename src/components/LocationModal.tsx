@@ -551,7 +551,7 @@ export default function LocationModal({
               }}>
                 {(() => {
                   const selectedCountry = COUNTRIES.find(c => c.code === formData.countryCode);
-                  return selectedCountry ? `${selectedCountry.code} - ${selectedCountry.name}` : '';
+                  return selectedCountry ? `${selectedCountry.flag} ${selectedCountry.code} - ${selectedCountry.name}` : '';
                 })()}
               </div>
               {/* Seta do select */}
