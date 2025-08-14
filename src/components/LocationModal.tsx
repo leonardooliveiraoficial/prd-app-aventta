@@ -271,17 +271,23 @@ export default function LocationModal({
             onClick={onClose}
             style={{
               background: 'rgba(120, 20, 40, 0.68)',
-              border: 'none',
+              border: '1.5px solid rgba(180, 40, 60, 0.18)',
               borderRadius: '50%',
-              width: '32px',
-              height: '32px',
+              width: '38px',
+              height: '38px',
               color: '#fff',
-              fontSize: '18px',
+              fontSize: '22px',
+              fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'background 0.2s'
+              transition: 'background 0.2s, color 0.2s',
+              boxShadow: '0 2px 12px 0 rgba(120,20,40,0.22)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              padding: 0,
+              lineHeight: 1
             }}
             onMouseOver={e => {
               (e.target as HTMLElement).style.background = 'rgba(180, 40, 60, 0.88)';
