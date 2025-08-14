@@ -375,7 +375,7 @@ export default function Sidebar({ onCityClick }: Props) {
               (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px 0 rgba(120,20,40,0.22)';
             }}
           >
-            <span style={{fontSize: isMobile ? 18 : isTablet ? 20 : 22, fontWeight: 700, textShadow: '0 2px 6px #0005'}}>×</span>
+            <span style={{fontSize: 'var(--font-xl)', fontWeight: 700, textShadow: '0 2px 6px #0005'}}>×</span>
           </button>
           <div style={CARD_TOP_STYLE(screenWidth)}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>

@@ -286,7 +286,7 @@ export default function LocationModal({
         }}>
           <h2 style={{ 
             margin: 0, 
-            fontSize: window.innerWidth < 480 ? '18px' : window.innerWidth < 768 ? '20px' : '24px', 
+            fontSize: 'var(--font-2xl)', 
             fontWeight: 700,
             color: '#fff',
             flex: window.innerWidth < 480 ? '1' : 'none'
@@ -302,7 +302,7 @@ export default function LocationModal({
               width: '38px',
               height: '38px',
               color: '#fff',
-              fontSize: '22px',
+              fontSize: 'var(--font-xl)',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
@@ -334,7 +334,7 @@ export default function LocationModal({
               display: 'block', 
               marginBottom: '8px', 
               fontWeight: 600,
-              fontSize: '14px',
+              fontSize: 'var(--font-sm)',
               color: '#d1d5db'
             }}>
               Nome do Local (opcional)
@@ -352,7 +352,7 @@ export default function LocationModal({
                 border: errors.label ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                 background: 'rgba(32, 32, 44, 0.8)',
                 color: '#fff',
-                fontSize: '16px',
+                fontSize: 'var(--font-base)',
                 fontFamily: 'Sora, Arial, sans-serif',
                 outline: 'none',
                 transition: 'border-color 0.2s',
@@ -370,7 +370,7 @@ export default function LocationModal({
               }}
             />
             {errors.label && (
-              <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+              <span style={{ color: '#ef4444', fontSize: 'var(--font-xs)', marginTop: 'var(--spacing-xs)', display: 'block' }}>
                 {errors.label}
               </span>
             )}
@@ -383,7 +383,7 @@ export default function LocationModal({
                 display: 'block', 
                 marginBottom: '8px', 
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
               }}>
                 Latitude *
@@ -401,7 +401,7 @@ export default function LocationModal({
                   border: errors.lat ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#fff',
-                  fontSize: '16px',
+                  fontSize: 'var(--font-base)',
                   fontFamily: 'Sora, Arial, sans-serif',
                   outline: 'none',
                   boxSizing: 'border-box'
@@ -418,7 +418,7 @@ export default function LocationModal({
                 }}
               />
               {errors.lat && (
-                <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                <span style={{ color: '#ef4444', fontSize: 'var(--font-xs)', marginTop: 'var(--spacing-xs)', display: 'block' }}>
                   {errors.lat}
                 </span>
               )}
@@ -428,7 +428,7 @@ export default function LocationModal({
                 display: 'block', 
                 marginBottom: '8px', 
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
               }}>
                 Longitude *
@@ -446,7 +446,7 @@ export default function LocationModal({
                   border: errors.lng ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#fff',
-                  fontSize: '16px',
+                  fontSize: 'var(--font-base)',
                   fontFamily: 'Sora, Arial, sans-serif',
                   outline: 'none',
                   boxSizing: 'border-box'
@@ -463,7 +463,7 @@ export default function LocationModal({
                 }}
               />
               {errors.lng && (
-                <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                <span style={{ color: '#ef4444', fontSize: 'var(--font-xs)', marginTop: 'var(--spacing-xs)', display: 'block' }}>
                   {errors.lng}
                 </span>
               )}
@@ -476,7 +476,7 @@ export default function LocationModal({
               textAlign: 'center', 
               marginBottom: '16px',
               color: '#26e6ff',
-              fontSize: '14px'
+              fontSize: 'var(--font-sm)'
             }}>
               🌍 Buscando informações do local...
             </div>
@@ -488,7 +488,7 @@ export default function LocationModal({
               display: 'block', 
               marginBottom: '8px', 
               fontWeight: 600,
-              fontSize: '14px',
+              fontSize: 'var(--font-sm)',
               color: '#d1d5db'
             }}>
               País *
@@ -504,7 +504,7 @@ export default function LocationModal({
                   border: errors.countryCode ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: 'transparent',
-                  fontSize: '16px',
+                  fontSize: 'var(--font-base)',
                   fontFamily: 'Sora, Arial, sans-serif',
                   outline: 'none',
                   boxSizing: 'border-box',
@@ -543,7 +543,7 @@ export default function LocationModal({
                 transform: 'translateY(-50%)',
                 pointerEvents: 'none',
                 color: '#fff',
-                fontSize: '16px',
+                fontSize: 'var(--font-base)',
                 fontFamily: 'Sora, Arial, sans-serif',
                 lineHeight: '1',
                 display: 'flex',
@@ -567,7 +567,7 @@ export default function LocationModal({
               </div>
             </div>
             {errors.countryCode && (
-              <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+              <span style={{ color: '#ef4444', fontSize: 'var(--font-xs)', marginTop: 'var(--spacing-xs)', display: 'block' }}>
                 {errors.countryCode}
               </span>
             )}
@@ -580,7 +580,7 @@ export default function LocationModal({
                 display: 'block', 
                 marginBottom: '8px', 
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
               }}>
                 Estado * (2 letras)
@@ -597,7 +597,7 @@ export default function LocationModal({
                   border: errors.state ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#fff',
-                  fontSize: '16px',
+                  fontSize: 'var(--font-base)',
                   fontFamily: 'Sora, Arial, sans-serif',
                   outline: 'none',
                   boxSizing: 'border-box'
@@ -614,7 +614,7 @@ export default function LocationModal({
                 }}
               />
               {errors.state && (
-                <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                <span style={{ color: '#ef4444', fontSize: 'var(--font-xs)', marginTop: 'var(--spacing-xs)', display: 'block' }}>
                   Estado é obrigatório
                 </span>
               )}
@@ -624,7 +624,7 @@ export default function LocationModal({
                 display: 'block', 
                 marginBottom: '8px', 
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
               }}>
                 Cidade *
@@ -641,7 +641,7 @@ export default function LocationModal({
                   border: errors.city ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#fff',
-                  fontSize: '16px',
+                  fontSize: 'var(--font-base)',
                   fontFamily: 'Sora, Arial, sans-serif',
                   outline: 'none',
                   boxSizing: 'border-box'
@@ -658,7 +658,7 @@ export default function LocationModal({
                 }}
               />
               {errors.city && (
-                <span style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                <span style={{ color: '#ef4444', fontSize: 'var(--font-xs)', marginTop: 'var(--spacing-xs)', display: 'block' }}>
                   Cidade é obrigatório
                 </span>
               )}
@@ -693,7 +693,7 @@ export default function LocationModal({
                   border: '1px solid #dc3545',
                   background: 'rgba(220, 53, 69, 0.8)',
                   color: '#fff',
-                  fontSize: window.innerWidth < 480 ? '13px' : window.innerWidth < 768 ? '14px' : '15px',
+                  fontSize: 'var(--font-sm)',
                   fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
@@ -736,7 +736,7 @@ export default function LocationModal({
                   border: '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#d1d5db',
-                  fontSize: window.innerWidth < 480 ? '13px' : window.innerWidth < 768 ? '14px' : '15px',
+                  fontSize: 'var(--font-sm)',
                   fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
@@ -769,7 +769,7 @@ export default function LocationModal({
                     ? 'rgba(80, 80, 120, 0.5)' 
                     : 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
                   color: '#fff',
-                  fontSize: window.innerWidth < 480 ? '13px' : window.innerWidth < 768 ? '14px' : '15px',
+                  fontSize: 'var(--font-sm)',
                   fontWeight: 600,
                   cursor: isLoading || isGeocodingLoading ? 'not-allowed' : 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',

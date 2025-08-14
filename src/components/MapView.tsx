@@ -187,13 +187,13 @@ export default function MapView() {
           >
             <Popup>
               <div style={{ minWidth: '200px', textAlign: 'center' }}>
-                <strong style={{ fontSize: '16px', color: '#333' }}>{location.label}</strong><br />
-                <div style={{ margin: '8px 0', color: '#666', fontSize: '14px' }}>
+                <strong style={{ fontSize: 'var(--font-base)', color: '#333' }}>{location.label}</strong><br />
+                <div style={{ margin: 'var(--spacing-sm) 0', color: '#666', fontSize: 'var(--font-sm)' }}>
                   {location.city && `${location.city}, `}
                   {location.state && `${location.state}, `}
                   {location.countryCode}
                 </div>
-                <div style={{ margin: '8px 0', color: '#888', fontSize: '12px' }}>
+                <div style={{ margin: 'var(--spacing-sm) 0', color: '#888', fontSize: 'var(--font-xs)' }}>
                   {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
                 </div>
                 <div style={{ 
@@ -214,7 +214,7 @@ export default function MapView() {
                       border: '1px solid #007bff',
                       background: '#007bff',
                       color: '#fff',
-                      fontSize: '12px',
+                      fontSize: 'var(--font-xs)',
                       cursor: 'pointer',
                       fontFamily: 'Sora, Arial, sans-serif'
                     }}
@@ -233,7 +233,7 @@ export default function MapView() {
                       border: '1px solid #dc3545',
                       background: '#dc3545',
                       color: '#fff',
-                      fontSize: '12px',
+                      fontSize: 'var(--font-xs)',
                       cursor: 'pointer',
                       fontFamily: 'Sora, Arial, sans-serif'
                     }}

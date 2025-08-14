@@ -109,7 +109,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '12px',
+          fontSize: 'var(--font-xs)',
           fontWeight: 'bold',
           flexShrink: 0
         }}
@@ -120,7 +120,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
       <div style={{ flex: 1 }}>
         <p style={{ 
           margin: 0, 
-          fontSize: '14px', 
+          fontSize: 'var(--font-sm)', 
           color: '#374151',
           lineHeight: '1.4'
         }}>
@@ -134,7 +134,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
           border: 'none',
           color: '#9ca3af',
           cursor: 'pointer',
-          fontSize: '16px',
+          fontSize: 'var(--font-base)',
           padding: '0',
           width: '20px',
           height: '20px',
