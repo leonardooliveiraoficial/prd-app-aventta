@@ -253,7 +253,7 @@ export default function LocationModal({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 2000,
-        padding: window.innerWidth < 480 ? '12px' : '20px'
+        padding: window.innerWidth < 480 ? '8px' : '16px'
       }}
     >
       <div 
@@ -264,7 +264,7 @@ export default function LocationModal({
           borderRadius: window.innerWidth < 480 ? '16px' : '24px',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
           color: '#fff',
-          padding: window.innerWidth < 480 ? '20px' : window.innerWidth < 768 ? '24px' : '32px',
+          padding: window.innerWidth < 480 ? '16px' : window.innerWidth < 768 ? '20px' : '24px',
           width: '100%',
           maxWidth: window.innerWidth < 480 ? '95vw' : '500px',
           maxHeight: '90vh',
@@ -280,7 +280,7 @@ export default function LocationModal({
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center', 
-          marginBottom: window.innerWidth < 480 ? '16px' : '24px',
+          marginBottom: window.innerWidth < 480 ? '12px' : '16px',
           flexWrap: window.innerWidth < 480 ? 'wrap' : 'nowrap',
           gap: window.innerWidth < 480 ? '8px' : '0'
         }}>
@@ -302,7 +302,7 @@ export default function LocationModal({
               width: '38px',
               height: '38px',
               color: '#fff',
-              fontSize: 'var(--font-xl)',
+              fontSize: 'var(--font-lg)',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
@@ -329,10 +329,10 @@ export default function LocationModal({
         {/* Form */}
         <form onSubmit={handleSubmit}>
           {/* Nome do Local */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '16px' }}>
             <label style={{ 
               display: 'block', 
-              marginBottom: '8px', 
+              marginBottom: '6px', 
               fontWeight: 600,
               fontSize: 'var(--font-sm)',
               color: '#d1d5db'
@@ -347,7 +347,7 @@ export default function LocationModal({
               placeholder="Ex: Serra do Cipó"
               style={{
                 width: '100%',
-                padding: '12px 16px',
+                padding: '10px 12px',
                 borderRadius: '12px',
                 border: errors.label ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                 background: 'rgba(32, 32, 44, 0.8)',
@@ -377,11 +377,11 @@ export default function LocationModal({
           </div>
 
           {/* Coordenadas */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
             <div>
               <label style={{ 
                 display: 'block', 
-                marginBottom: '8px', 
+                marginBottom: '6px', 
                 fontWeight: 600,
                 fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
@@ -396,7 +396,7 @@ export default function LocationModal({
                 placeholder="-19.3861"
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '10px 12px',
                   borderRadius: '12px',
                   border: errors.lat ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
@@ -426,7 +426,7 @@ export default function LocationModal({
             <div>
               <label style={{ 
                 display: 'block', 
-                marginBottom: '8px', 
+                marginBottom: '6px', 
                 fontWeight: 600,
                 fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
@@ -441,7 +441,7 @@ export default function LocationModal({
                 placeholder="-43.5873"
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '10px 12px',
                   borderRadius: '12px',
                   border: errors.lng ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
@@ -483,7 +483,7 @@ export default function LocationModal({
           )}
 
           {/* Código do País */}
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '16px' }}>
             <label style={{ 
               display: 'block', 
               marginBottom: '8px', 
@@ -499,7 +499,7 @@ export default function LocationModal({
                 onChange={e => handleInputChange('countryCode', e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '10px 12px',
                   borderRadius: '12px',
                   border: errors.countryCode ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
@@ -578,7 +578,7 @@ export default function LocationModal({
             <div>
               <label style={{ 
                 display: 'block', 
-                marginBottom: '8px', 
+                marginBottom: '6px', 
                 fontWeight: 600,
                 fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
@@ -592,7 +592,7 @@ export default function LocationModal({
                 placeholder="MG"
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '10px 12px',
                   borderRadius: '12px',
                   border: errors.state ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
@@ -622,7 +622,7 @@ export default function LocationModal({
             <div>
               <label style={{ 
                 display: 'block', 
-                marginBottom: '8px', 
+                marginBottom: '6px', 
                 fontWeight: 600,
                 fontSize: 'var(--font-sm)',
                 color: '#d1d5db'
@@ -636,7 +636,7 @@ export default function LocationModal({
                 placeholder="Belo Horizonte"
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '10px 12px',
                   borderRadius: '12px',
                   border: errors.city ? '2px solid #ef4444' : '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
@@ -688,7 +688,7 @@ export default function LocationModal({
                   position: 'absolute',
                   left: '0',
                   bottom: '0',
-                  padding: window.innerWidth < 480 ? '8px 12px' : window.innerWidth < 768 ? '10px 16px' : '12px 20px',
+                  padding: '10px 12px',
                   borderRadius: '8px',
                   border: '1px solid #dc3545',
                   background: 'rgba(220, 53, 69, 0.8)',
@@ -701,7 +701,7 @@ export default function LocationModal({
                   opacity: isLoading ? 0.5 : 1,
                   minWidth: 'auto',
                   width: 'auto',
-                  height: window.innerWidth < 480 ? '33px' : window.innerWidth < 768 ? '37px' : '41px',
+                  height: '40px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -724,14 +724,15 @@ export default function LocationModal({
             {/* Botões Cancelar e Salvar */}
             <div style={{ 
               display: 'flex', 
-              gap: window.innerWidth < 480 ? '8px' : '12px'
+              gap: window.innerWidth < 480 ? '8px' : '12px',
+              alignItems: 'center'
             }}>
               <button
                 type="button"
                 onClick={onClose}
                 disabled={isLoading}
                 style={{
-                  padding: window.innerWidth < 480 ? '8px 12px' : window.innerWidth < 768 ? '10px 16px' : '12px 20px',
+                  padding: '10px 16px',
                   borderRadius: '8px',
                   border: '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
@@ -742,8 +743,8 @@ export default function LocationModal({
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
                   opacity: isLoading ? 0.5 : 1,
-                  minWidth: window.innerWidth < 480 ? '70px' : '80px',
-                  flex: window.innerWidth < 480 ? '1' : 'none'
+                  minWidth: '80px',
+                  height: '40px'
                 }}
                 onMouseOver={e => {
                   if (!isLoading) {
@@ -775,8 +776,8 @@ export default function LocationModal({
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
                   opacity: isLoading || isGeocodingLoading ? 0.7 : 1,
-                  minWidth: window.innerWidth < 480 ? '70px' : '80px',
-                  flex: window.innerWidth < 480 ? '1' : 'none'
+                  minWidth: '80px',
+                  height: '40px'
                 }}
                 onMouseOver={e => {
                   if (!isLoading && !isGeocodingLoading) {
