@@ -252,7 +252,7 @@ export default function LocationModal({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 2000,
-        padding: '20px'
+        padding: window.innerWidth < 480 ? '12px' : '20px'
       }}
     >
       <div 
@@ -260,12 +260,12 @@ export default function LocationModal({
         className="modal-content"
         style={{
           background: 'rgba(22, 22, 28, 0.98)',
-          borderRadius: '24px',
+          borderRadius: window.innerWidth < 480 ? '16px' : '24px',
           boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
           color: '#fff',
-          padding: '32px',
+          padding: window.innerWidth < 480 ? '20px' : window.innerWidth < 768 ? '24px' : '32px',
           width: '100%',
-          maxWidth: '500px',
+          maxWidth: window.innerWidth < 480 ? '95vw' : '500px',
           maxHeight: '90vh',
           overflowY: 'auto',
           fontFamily: 'Sora, Arial, sans-serif',
@@ -275,12 +275,20 @@ export default function LocationModal({
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: window.innerWidth < 480 ? '16px' : '24px',
+          flexWrap: window.innerWidth < 480 ? 'wrap' : 'nowrap',
+          gap: window.innerWidth < 480 ? '8px' : '0'
+        }}>
           <h2 style={{ 
             margin: 0, 
-            fontSize: '24px', 
+            fontSize: window.innerWidth < 480 ? '18px' : window.innerWidth < 768 ? '20px' : '24px', 
             fontWeight: 700,
-            color: '#fff'
+            color: '#fff',
+            flex: window.innerWidth < 480 ? '1' : 'none'
           }}>
             {title || (editingLocation ? 'Editar Local' : 'Adicionar Local')}
           </h2>
@@ -613,8 +621,13 @@ export default function LocationModal({
           </div>
 
           {/* Botões */}
-          <div style={{ display: 'flex', gap: '12px', justifyContent: editingLocation && onRemove ? 'space-between' : 'flex-end' }}>
-            {/* Botão Remover - só aparece quando editando */}
+          <div style={{ 
+            position: 'relative',
+            display: 'flex', 
+            justifyContent: 'flex-end',
+            gap: window.innerWidth < 480 ? '8px' : '12px'
+          }}>
+            {/* Botão Remover - posicionado no canto inferior esquerdo */}
             {editingLocation && onRemove && (
               <button
                 type="button"
@@ -627,17 +640,26 @@ export default function LocationModal({
                 }}
                 disabled={isLoading}
                 style={{
-                  padding: '12px 24px',
-                  borderRadius: '12px',
+                  position: 'absolute',
+                  left: '0',
+                  bottom: '0',
+                  padding: window.innerWidth < 480 ? '8px 12px' : window.innerWidth < 768 ? '10px 16px' : '12px 20px',
+                  borderRadius: '8px',
                   border: '1px solid #dc3545',
                   background: 'rgba(220, 53, 69, 0.8)',
                   color: '#fff',
-                  fontSize: '16px',
+                  fontSize: window.innerWidth < 480 ? '13px' : window.innerWidth < 768 ? '14px' : '15px',
                   fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
-                  opacity: isLoading ? 0.5 : 1
+                  opacity: isLoading ? 0.5 : 1,
+                  minWidth: 'auto',
+                  width: 'auto',
+                  height: window.innerWidth < 480 ? '33px' : window.innerWidth < 768 ? '37px' : '41px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
                 onMouseOver={e => {
                   if (!isLoading) {
@@ -650,28 +672,33 @@ export default function LocationModal({
                   }
                 }}
               >
-                🗑️ Remover
+                🗑️
               </button>
             )}
             
             {/* Botões Cancelar e Salvar */}
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: window.innerWidth < 480 ? '8px' : '12px'
+            }}>
               <button
                 type="button"
                 onClick={onClose}
                 disabled={isLoading}
                 style={{
-                  padding: '12px 24px',
-                  borderRadius: '12px',
+                  padding: window.innerWidth < 480 ? '8px 12px' : window.innerWidth < 768 ? '10px 16px' : '12px 20px',
+                  borderRadius: '8px',
                   border: '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#d1d5db',
-                  fontSize: '16px',
+                  fontSize: window.innerWidth < 480 ? '13px' : window.innerWidth < 768 ? '14px' : '15px',
                   fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
-                  opacity: isLoading ? 0.5 : 1
+                  opacity: isLoading ? 0.5 : 1,
+                  minWidth: window.innerWidth < 480 ? '70px' : '80px',
+                  flex: window.innerWidth < 480 ? '1' : 'none'
                 }}
                 onMouseOver={e => {
                   if (!isLoading) {
@@ -690,19 +717,21 @@ export default function LocationModal({
                 type="submit"
                 disabled={isLoading || isGeocodingLoading}
                 style={{
-                  padding: '12px 24px',
-                  borderRadius: '12px',
+                  padding: window.innerWidth < 480 ? '8px 12px' : window.innerWidth < 768 ? '10px 16px' : '12px 20px',
+                  borderRadius: '8px',
                   border: 'none',
                   background: isLoading || isGeocodingLoading 
                     ? 'rgba(80, 80, 120, 0.5)' 
                     : 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
                   color: '#fff',
-                  fontSize: '16px',
+                  fontSize: window.innerWidth < 480 ? '13px' : window.innerWidth < 768 ? '14px' : '15px',
                   fontWeight: 600,
                   cursor: isLoading || isGeocodingLoading ? 'not-allowed' : 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
-                  opacity: isLoading || isGeocodingLoading ? 0.7 : 1
+                  opacity: isLoading || isGeocodingLoading ? 0.7 : 1,
+                  minWidth: window.innerWidth < 480 ? '70px' : '80px',
+                  flex: window.innerWidth < 480 ? '1' : 'none'
                 }}
                 onMouseOver={e => {
                   if (!isLoading && !isGeocodingLoading) {

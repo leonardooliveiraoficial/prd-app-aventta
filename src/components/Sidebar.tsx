@@ -9,160 +9,222 @@ type Props = {
   onCityClick?: (lat: number, lng: number) => void;
 };
 
-const SIDEBAR_STYLE = (open: boolean) => ({
-  position: 'fixed' as const,
-  top: 24,
-  left: 24,
-  zIndex: 1500,
-  width: 'calc(100vw - 48px)',
-  minHeight: 100,
-  background: 'rgba(22,22,28,0.98)', // fundo escuro mais neutro
-  borderRadius: 36,
-  boxShadow: '0 8px 32px 0 rgba(0,0,0,0.32)',
-  color: '#fff',
-  padding: 20,
-  fontFamily: 'Sora, Arial, sans-serif',
-  height: undefined,
-  maxHeight: 600,
-  display: 'flex' as const,
-  flexDirection: 'column' as const,
-  transition: 'all 0.3s cubic-bezier(.77,.2,.24,1) 0s',
-  boxSizing: 'border-box' as const,
-  opacity: open ? 1 : 0,
-  transform: open ? 'translateX(0)' : 'translateX(-40px)',
-  gap: 16,
-});
-
-const CLOSE_BTN_STYLE = {
-  position: 'absolute' as const,
-  top: -12,
-  right: -12,
-  zIndex: 2001,
-  width: 38,
-  height: 38,
-  display: 'flex' as const,
-  alignItems: 'center' as const,
-  justifyContent: 'center' as const,
-  background: 'rgba(120, 20, 40, 0.68)', // glassmorphism vermelho dark
-  boxShadow: '0 2px 12px 0 rgba(120,20,40,0.22)',
-  backdropFilter: 'blur(8px)',
-  WebkitBackdropFilter: 'blur(8px)',
-  border: '1.5px solid rgba(180, 40, 60, 0.18)',
-  borderRadius: '50%',
-  color: '#fff',
-  cursor: 'pointer',
-  transition: 'background 0.2s, color 0.2s',
-  padding: 0,
-  lineHeight: 1,
-  touchAction: 'manipulation' as const,
+const SIDEBAR_STYLE = (open: boolean, screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    position: 'fixed' as const,
+    top: isMobile ? 16 : 24,
+    left: isMobile ? 16 : 24,
+    zIndex: 1500,
+    width: isMobile ? 'calc(100vw - 32px)' : isTablet ? 'calc(100vw - 48px)' : 'calc(100vw - 48px)',
+    maxWidth: isMobile ? 'none' : isTablet ? '450px' : '500px',
+    minHeight: 100,
+    background: 'rgba(22,22,28,0.98)',
+    borderRadius: isMobile ? 24 : isTablet ? 30 : 36,
+    boxShadow: '0 8px 32px 0 rgba(0,0,0,0.32)',
+    color: '#fff',
+    padding: isMobile ? 16 : isTablet ? 18 : 20,
+    fontFamily: 'Sora, Arial, sans-serif',
+    height: undefined,
+    maxHeight: isMobile ? '85vh' : isTablet ? '75vh' : '600px',
+    display: 'flex' as const,
+    flexDirection: 'column' as const,
+    transition: 'all 0.3s cubic-bezier(.77,.2,.24,1) 0s',
+    boxSizing: 'border-box' as const,
+    opacity: open ? 1 : 0,
+    transform: open ? 'translateX(0)' : 'translateX(-40px)',
+    gap: isMobile ? 12 : isTablet ? 14 : 16,
+  };
 };
 
-const CARD_TOP_STYLE = (isMobile: boolean) => ({
-  borderRadius: 20,
-  background: 'rgba(32, 32, 44, 0.78)', // glassmorphism escuro mais claro
-  boxShadow: '0 4px 24px 0 rgba(0,0,0,0.28)',
-  backdropFilter: 'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
-  border: '1.5px solid rgba(80, 80, 120, 0.18)',
-  padding: isMobile ? '16px 10px 10px 10px' : '22px 22px 12px 22px',
-  marginBottom: isMobile ? 12 : 18,
-  fontWeight: 700,
-  fontSize: isMobile ? 22 : 28,
-  textShadow: '0 2px 6px #0005',
-  display: 'flex' as const,
-  flexDirection: 'column' as const,
-  alignItems: 'center' as const,
-  justifyContent: 'center' as const,
-});
+const CLOSE_BTN_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    position: 'absolute' as const,
+    top: isMobile ? -10 : -12,
+    right: isMobile ? -10 : -12,
+    zIndex: 2001,
+    width: isMobile ? 32 : isTablet ? 35 : 38,
+    height: isMobile ? 32 : isTablet ? 35 : 38,
+    display: 'flex' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    background: 'rgba(120, 20, 40, 0.68)',
+    boxShadow: '0 2px 12px 0 rgba(120,20,40,0.22)',
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    border: '1.5px solid rgba(180, 40, 60, 0.18)',
+    borderRadius: '50%',
+    color: '#fff',
+    cursor: 'pointer',
+    transition: 'background 0.2s, color 0.2s',
+    padding: 0,
+    lineHeight: 1,
+    touchAction: 'manipulation' as const,
+    fontSize: isMobile ? 18 : isTablet ? 20 : 22,
+  };
+};
 
-const TITLE_STYLE = (isMobile: boolean) => ({
-  fontWeight: 900,
-  fontSize: isMobile ? 18 : 22,
-  letterSpacing: 0.5,
-  color: '#fff',
-  textAlign: 'center' as const,
-  lineHeight: 1.15,
-  fontFamily: 'Sora, Arial, sans-serif',
-});
+const CARD_TOP_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    borderRadius: isMobile ? 16 : isTablet ? 18 : 20,
+    background: 'rgba(32, 32, 44, 0.78)',
+    boxShadow: '0 4px 24px 0 rgba(0,0,0,0.28)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: '1.5px solid rgba(80, 80, 120, 0.18)',
+    padding: isMobile ? '14px 8px 8px 8px' : isTablet ? '18px 16px 10px 16px' : '22px 22px 12px 22px',
+    marginBottom: isMobile ? 10 : isTablet ? 14 : 18,
+    fontWeight: 700,
+    fontSize: isMobile ? 20 : isTablet ? 24 : 28,
+    textShadow: '0 2px 6px #0005',
+    display: 'flex' as const,
+    flexDirection: 'column' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+  };
+};
 
-const SUBTITLE_STYLE = (isMobile: boolean) => ({
-  fontWeight: 400,
-  fontSize: isMobile ? 14 : 16,
-  marginTop: 7,
-  color: '#d1d5db', // cinza claro
-  textAlign: 'center' as const,
-  marginBottom: isMobile ? 4 : 8,
-  fontFamily: 'Sora, Arial, sans-serif',
-});
+const TITLE_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    fontWeight: 900,
+    fontSize: isMobile ? 16 : isTablet ? 19 : 22,
+    letterSpacing: 0.5,
+    color: '#fff',
+    textAlign: 'center' as const,
+    lineHeight: 1.15,
+    fontFamily: 'Sora, Arial, sans-serif',
+  };
+};
 
-const LIST_TITLE_STYLE = (isMobile: boolean) => ({
-  marginBottom: isMobile ? 6 : 10,
-  fontWeight: 700,
-  fontSize: isMobile ? 16 : 18,
-  letterSpacing: 0.2,
-  textAlign: 'left' as const,
-  color: '#fff',
-  fontFamily: 'Sora, Arial, sans-serif',
-});
+const SUBTITLE_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    fontWeight: 400,
+    fontSize: isMobile ? 12 : isTablet ? 14 : 16,
+    marginTop: isMobile ? 5 : 7,
+    color: '#d1d5db',
+    textAlign: 'center' as const,
+    marginBottom: isMobile ? 3 : isTablet ? 6 : 8,
+    fontFamily: 'Sora, Arial, sans-serif',
+  };
+};
 
-const UL_STYLE = (isMobile: boolean) => ({
-  margin: 0,
-  padding: 0,
-  listStyle: 'none',
-  maxHeight: isMobile ? '70vh' : 400,
-  minHeight: 80,
-  overflowY: 'auto' as const,
-  fontSize: isMobile ? 15 : 16,
-  gap: isMobile ? 2 : 4,
-});
+const LIST_TITLE_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    marginBottom: isMobile ? 5 : isTablet ? 8 : 10,
+    fontWeight: 700,
+    fontSize: isMobile ? 14 : isTablet ? 16 : 18,
+    letterSpacing: 0.2,
+    textAlign: 'left' as const,
+    color: '#fff',
+    fontFamily: 'Sora, Arial, sans-serif',
+  };
+};
 
-const LI_STYLE = (isMobile: boolean) => ({
-  padding: isMobile ? '7px 6px' : '10px 12px',
-  borderBottom: '1px solid #222',
-  display: 'flex' as const,
-  alignItems: 'center' as const,
-  gap: isMobile ? 6 : 10,
-  cursor: 'pointer',
-  transition: 'background 0.25s',
-  borderRadius: 6,
-  marginBottom: isMobile ? 1 : 2,
-  position: 'relative' as const,
-  fontWeight: 600,
-  background: undefined,
-});
+const UL_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    margin: 0,
+    padding: 0,
+    listStyle: 'none',
+    maxHeight: isMobile ? '60vh' : isTablet ? '65vh' : 400,
+    minHeight: isMobile ? 60 : 80,
+    overflowY: 'auto' as const,
+    fontSize: isMobile ? 14 : isTablet ? 15 : 16,
+    gap: isMobile ? 1 : isTablet ? 3 : 4,
+  };
+};
 
-const DOT_STYLE = (isMobile: boolean) => ({
-  width: 7,
-  height: 7,
-  background: '#26e6ff',
-  borderRadius: '50%',
-  display: 'inline-block',
-  marginRight: isMobile ? 8 : 12,
-});
+const LI_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    padding: isMobile ? '6px 4px' : isTablet ? '8px 8px' : '10px 12px',
+    borderBottom: '1px solid #222',
+    display: 'flex' as const,
+    alignItems: 'center' as const,
+    gap: isMobile ? 4 : isTablet ? 7 : 10,
+    cursor: 'pointer',
+    transition: 'background 0.25s',
+    borderRadius: isMobile ? 4 : 6,
+    marginBottom: isMobile ? 0.5 : isTablet ? 1 : 2,
+    position: 'relative' as const,
+    fontWeight: 600,
+    background: undefined,
+  };
+};
 
-const CITY_STYLE = (isMobile: boolean) => ({
-  fontWeight: 700,
-  fontSize: isMobile ? 15 : 16,
-  color: '#fff',
-  marginRight: 4,
-  fontFamily: 'Sora, Arial, sans-serif',
-});
+const DOT_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    width: isMobile ? 5 : 7,
+    height: isMobile ? 5 : 7,
+    background: '#26e6ff',
+    borderRadius: '50%',
+    display: 'inline-block',
+    marginRight: isMobile ? 6 : isTablet ? 9 : 12,
+  };
+};
 
-const STATE_STYLE = (isMobile: boolean) => ({
-  color: '#d1d5db', // cinza claro
-  fontWeight: 400,
-  fontSize: isMobile ? 13 : 14,
-  marginRight: 4,
-  fontFamily: 'Sora, Arial, sans-serif',
-});
+const CITY_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    fontWeight: 700,
+    fontSize: isMobile ? 13 : isTablet ? 14 : 16,
+    color: '#fff',
+    marginRight: isMobile ? 2 : 4,
+    fontFamily: 'Sora, Arial, sans-serif',
+  };
+};
 
-const COUNTRY_FLAG_STYLE = (isMobile: boolean) => ({
-  fontSize: isMobile ? 20 : 22,
-  marginLeft: 'auto',
-  marginRight: 4,
-  filter: 'drop-shadow(0 1px 4px #26e6ff44)',
-  userSelect: 'none' as const,
-});
+const STATE_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    color: '#d1d5db',
+    fontWeight: 400,
+    fontSize: isMobile ? 11 : isTablet ? 12 : 14,
+    marginRight: isMobile ? 2 : 4,
+    fontFamily: 'Sora, Arial, sans-serif',
+  };
+};
+
+const COUNTRY_FLAG_STYLE = (screenWidth: number) => {
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  
+  return {
+    fontSize: isMobile ? 16 : isTablet ? 19 : 22,
+    marginLeft: 'auto',
+    marginRight: isMobile ? 2 : 4,
+    filter: 'drop-shadow(0 1px 4px #26e6ff44)',
+    userSelect: 'none' as const,
+  };
+};
 
 
 
@@ -173,8 +235,11 @@ export default function Sidebar({ onCityClick }: Props) {
   const { showToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Detecta mobile dinamicamente
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 700 : false;
+  // Detecta tamanhos de tela dinamicamente
+  const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+  const isMobile = screenWidth <= 480;
+  const isTablet = screenWidth > 480 && screenWidth <= 768;
+  const isDesktop = screenWidth > 768;
   const total = locations.length;
   const estados = useMemo(() => Array.from(new Set(locations.map(l => l.state).filter(e => e && e.trim() !== ''))), [locations]);
   const paises = useMemo(() => Array.from(new Set(locations.map(l => l.countryCode))), [locations]);
@@ -248,16 +313,16 @@ export default function Sidebar({ onCityClick }: Props) {
         <button
           style={{
             position: 'fixed',
-            top: 24,
-            left: 16,
+            top: isMobile ? 16 : 24,
+            left: isMobile ? 12 : 16,
             zIndex: 2000,
-            width: 48,
-            height: 48,
+            width: isMobile ? 40 : isTablet ? 44 : 48,
+            height: isMobile ? 40 : isTablet ? 44 : 48,
             background: 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
             color: '#fff',
             border: 'none',
-            borderRadius: 12,
-            fontSize: 28,
+            borderRadius: isMobile ? 10 : 12,
+            fontSize: isMobile ? 24 : isTablet ? 26 : 28,
             boxShadow: '0 4px 14px #0008',
             cursor: 'pointer',
             transition: 'background 0.2s, box-shadow 0.2s',
@@ -284,14 +349,14 @@ export default function Sidebar({ onCityClick }: Props) {
             (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px #0008';
           }}
         >
-          <span style={{ color: '#fff', fontSize: 32, fontWeight: 700, lineHeight: 1 }}>≡</span>
+          <span style={{ color: '#fff', fontSize: isMobile ? 28 : isTablet ? 30 : 32, fontWeight: 700, lineHeight: 1 }}>≡</span>
         </button>
       )}
       {open && (
-        <aside style={SIDEBAR_STYLE(open)}>
+        <aside style={SIDEBAR_STYLE(open, screenWidth)}>
           <button
             onClick={() => setOpen(false)}
-            style={CLOSE_BTN_STYLE}
+            style={CLOSE_BTN_STYLE(screenWidth)}
             aria-label="Fechar lista"
             onMouseOver={e => {
               e.currentTarget.style.background = 'rgba(180, 40, 60, 0.88)';
@@ -310,41 +375,41 @@ export default function Sidebar({ onCityClick }: Props) {
               (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px 0 rgba(120,20,40,0.22)';
             }}
           >
-            <span style={{fontSize: 22, fontWeight: 700, textShadow: '0 2px 6px #0005'}}>×</span>
+            <span style={{fontSize: isMobile ? 18 : isTablet ? 20 : 22, fontWeight: 700, textShadow: '0 2px 6px #0005'}}>×</span>
           </button>
-          <div style={CARD_TOP_STYLE(isMobile)}>
+          <div style={CARD_TOP_STYLE(screenWidth)}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-              <span style={{ fontSize: isMobile ? 22 : 28, marginRight: 2 }}>🌎</span>
-              <span style={TITLE_STYLE(isMobile)}>Meu Mapa de Rotas</span>
+              <span style={{ fontSize: isMobile ? 18 : isTablet ? 24 : 28, marginRight: 2 }}>🌎</span>
+              <span style={TITLE_STYLE(screenWidth)}>Meu Mapa de Rotas</span>
             </div>
-            <div style={SUBTITLE_STYLE(isMobile)}>
+            <div style={SUBTITLE_STYLE(screenWidth)}>
               Eu já visitei <span style={{ color: '#fff', fontWeight: 700 }}>{total}</span> cidades, <span style={{ color: '#fff', fontWeight: 700 }}>{estados.length}</span> estados e <span style={{ color: '#fff', fontWeight: 700 }}>{paises.length}</span> países.
             </div>
             
             {/* Botões de ação */}
             <div style={{ 
               display: 'flex', 
-              gap: isMobile ? 8 : 12, 
-              marginTop: isMobile ? 12 : 16,
+              gap: isMobile ? 6 : isTablet ? 10 : 12, 
+              marginTop: isMobile ? 10 : isTablet ? 14 : 16,
               justifyContent: 'center',
               flexWrap: 'wrap'
             }}>
               <button
                 onClick={() => setIsModalOpen(true)}
                 style={{
-                  padding: isMobile ? '8px 16px' : '10px 20px',
-                  borderRadius: '8px',
+                  padding: isMobile ? '6px 12px' : isTablet ? '8px 16px' : '10px 20px',
+                  borderRadius: isMobile ? '6px' : '8px',
                   border: 'none',
                   background: 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
                   color: '#fff',
-                  fontSize: isMobile ? 12 : 14,
+                  fontSize: isMobile ? 11 : isTablet ? 12 : 14,
                   fontWeight: 600,
                   cursor: 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 6
+                  gap: isMobile ? 4 : 6
                 }}
                 onMouseOver={e => {
                   (e.target as HTMLElement).style.background = 'linear-gradient(90deg, #6c3fdc 60%, #26e6ff 100%)';
@@ -361,19 +426,19 @@ export default function Sidebar({ onCityClick }: Props) {
               <button
                 onClick={handleExport}
                 style={{
-                  padding: isMobile ? '8px 12px' : '10px 16px',
-                  borderRadius: '8px',
+                  padding: isMobile ? '6px 10px' : isTablet ? '8px 12px' : '10px 16px',
+                  borderRadius: isMobile ? '6px' : '8px',
                   border: '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#d1d5db',
-                  fontSize: isMobile ? 12 : 14,
+                  fontSize: isMobile ? 11 : isTablet ? 12 : 14,
                   fontWeight: 600,
                   cursor: 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 4
+                  gap: isMobile ? 3 : 4
                 }}
                 onMouseOver={e => {
                   (e.target as HTMLElement).style.background = 'rgba(60, 60, 80, 0.8)';
@@ -384,25 +449,25 @@ export default function Sidebar({ onCityClick }: Props) {
                   (e.target as HTMLElement).style.transform = 'translateY(0)';
                 }}
               >
-                <span>📤</span> {isMobile ? 'Export' : 'Exportar'}
+                <span>📤</span> {isMobile ? 'Exp' : isTablet ? 'Export' : 'Exportar'}
               </button>
               
               <button
                 onClick={handleImport}
                 style={{
-                  padding: isMobile ? '8px 12px' : '10px 16px',
-                  borderRadius: '8px',
+                  padding: isMobile ? '6px 10px' : isTablet ? '8px 12px' : '10px 16px',
+                  borderRadius: isMobile ? '6px' : '8px',
                   border: '1px solid rgba(80, 80, 120, 0.3)',
                   background: 'rgba(32, 32, 44, 0.8)',
                   color: '#d1d5db',
-                  fontSize: isMobile ? 12 : 14,
+                  fontSize: isMobile ? 11 : isTablet ? 12 : 14,
                   fontWeight: 600,
                   cursor: 'pointer',
                   fontFamily: 'Sora, Arial, sans-serif',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 4
+                  gap: isMobile ? 3 : 4
                 }}
                 onMouseOver={e => {
                   (e.target as HTMLElement).style.background = 'rgba(60, 60, 80, 0.8)';
@@ -413,14 +478,14 @@ export default function Sidebar({ onCityClick }: Props) {
                   (e.target as HTMLElement).style.transform = 'translateY(0)';
                 }}
               >
-                <span>📥</span> {isMobile ? 'Import' : 'Importar'}
+                <span>📥</span> {isMobile ? 'Imp' : isTablet ? 'Import' : 'Importar'}
               </button>
             </div>
           </div>
-          <div style={LIST_TITLE_STYLE(isMobile)}>
+          <div style={LIST_TITLE_STYLE(screenWidth)}>
             Lista de cidades, estados e países:
           </div>
-          <ul style={UL_STYLE(isMobile)}>
+          <ul style={UL_STYLE(screenWidth)}>
             {locations
               .filter(loc => loc.city)
               .sort((a, b) => a.city!.localeCompare(b.city!, 'pt-BR', { sensitivity: 'base' }))
@@ -428,7 +493,7 @@ export default function Sidebar({ onCityClick }: Props) {
               <li
                 key={i}
                 style={{
-                  ...LI_STYLE(isMobile),
+                  ...LI_STYLE(screenWidth),
                   borderBottom: i < locations.length - 1 ? '1px solid #222' : 'none',
                 }}
                 onClick={() => handleCityClick(loc.lat, loc.lng)}
@@ -440,12 +505,12 @@ export default function Sidebar({ onCityClick }: Props) {
                   if (onCityClick) (e.currentTarget as HTMLElement).style.background = '';
                 }}
               >
-                <span style={DOT_STYLE(isMobile)}></span>
-                <span style={CITY_STYLE(isMobile)}>{loc.city}</span>
+                <span style={DOT_STYLE(screenWidth)}></span>
+                <span style={CITY_STYLE(screenWidth)}>{loc.city}</span>
                 {loc.state && (
-                  <span style={STATE_STYLE(isMobile)}>{loc.state}</span>
+                  <span style={STATE_STYLE(screenWidth)}>{loc.state}</span>
                 )}
-                <span style={COUNTRY_FLAG_STYLE(isMobile)}>{getCountryFlag(loc.countryCode)}</span>
+                <span style={COUNTRY_FLAG_STYLE(screenWidth)}>{getCountryFlag(loc.countryCode)}</span>
               </li>
             ))}
           </ul>
