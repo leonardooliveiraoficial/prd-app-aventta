@@ -98,7 +98,7 @@ const TITLE_STYLE = (screenWidth: number) => {
   
   return {
     fontWeight: 900,
-    fontSize: isMobile ? 16 : isTablet ? 19 : 22,
+    fontSize: isMobile ? 18 : isTablet ? 21 : 24,
     letterSpacing: 0.5,
     color: '#fff',
     textAlign: 'center' as const,
@@ -128,7 +128,7 @@ const LIST_TITLE_STYLE = (screenWidth: number) => {
   
   return {
     marginBottom: isMobile ? 5 : isTablet ? 8 : 10,
-    fontWeight: 700,
+    fontWeight: 400,
     fontSize: isMobile ? 14 : isTablet ? 16 : 18,
     letterSpacing: 0.2,
     textAlign: 'left' as const,
@@ -316,8 +316,8 @@ export default function Sidebar({ onCityClick }: Props) {
             top: isMobile ? 16 : 24,
             left: isMobile ? 12 : 16,
             zIndex: 2000,
-            width: isMobile ? 40 : isTablet ? 44 : 48,
-            height: isMobile ? 40 : isTablet ? 44 : 48,
+            width: isMobile ? 44 : isTablet ? 48 : 52,
+            height: isMobile ? 44 : isTablet ? 48 : 52,
             background: 'linear-gradient(90deg, #8f5fe8 60%, #26e6ff 100%)',
             color: '#fff',
             border: 'none',
@@ -349,7 +349,7 @@ export default function Sidebar({ onCityClick }: Props) {
             (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px #0008';
           }}
         >
-          <span style={{ color: '#fff', fontSize: isMobile ? 28 : isTablet ? 30 : 32, fontWeight: 700, lineHeight: 1 }}>≡</span>
+          <span style={{ color: '#fff', fontSize: isMobile ? 30 : isTablet ? 32 : 34, fontWeight: 700, lineHeight: 1 }}>≡</span>
         </button>
       )}
       {open && (

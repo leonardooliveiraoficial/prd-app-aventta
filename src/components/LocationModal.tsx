@@ -286,7 +286,7 @@ export default function LocationModal({
         }}>
           <h2 style={{ 
             margin: 0, 
-            fontSize: 'var(--font-2xl)', 
+            fontSize: 'var(--font-xl)', 
             fontWeight: 700,
             color: '#fff',
             flex: window.innerWidth < 480 ? '1' : 'none'
@@ -302,7 +302,7 @@ export default function LocationModal({
               width: '38px',
               height: '38px',
               color: '#fff',
-              fontSize: 'var(--font-lg)',
+              fontSize: 'var(--font-base)',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
